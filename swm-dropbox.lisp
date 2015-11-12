@@ -3,10 +3,17 @@
 
 (in-package #:swm-dropbox)
 
-(defun fmt-dropbox (ml)
-  "Return dropbox status"
-  (declare (ignore ml))
+(defvar *dropbox-status* "Checking..")
+
+(defun fetch-status ()
   (string-right-trim '(#\Space)
 		     (first (split-sequence:split-sequence #\Newline (format nil "~A" (run-shell-command "dropbox status" t))))))
 
+(defun fmt-dropbox (ml)
+  "Return dropbox status"
+  (declare (ignore ml))
+  *dropbox-status*) 
+
 (add-screen-mode-line-formatter #\x #'fmt-dropbox)
+
+(run-with-timer 0 10 #'fetch-status)
